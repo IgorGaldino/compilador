@@ -28,7 +28,7 @@ INVALID (.)
     return INPUT;
     }
 
-[-+()=/*^] {
+[-+()=/*^#] {
     return *yytext;
     }
 {START} {
@@ -45,9 +45,8 @@ INVALID (.)
     strcpy(yylval.str, yytext);  
 	return VAR;
 }
-{INVALID} {;}
-
 {COMMENT} {;}
+{INVALID} {;}
 
 %%
 

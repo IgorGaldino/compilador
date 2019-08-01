@@ -51,7 +51,7 @@ Var *insereVar(Var *vars, char nome[]) {
 %token INPUT
 %left '+' '-'
 %left '*' '/'
-%right '^'
+%right '^' '#'
 %right NEG
 %type <flo> exp
 %type <flo> valor
@@ -108,7 +108,7 @@ exp: exp '+' exp {$$ = $1 + $3;}
 	|exp '/' exp {$$ = $1 / $3;}
 	|'(' exp ')' {$$ = $2;}
 	|exp '^' exp {$$ = pow($1,$3);}
-	|'#' exp {$$ = pow($2, 0.5);}
+	|'#' exp {$$ = sqrt($2);}
 	|'-' exp %prec NEG {$$ = -$2;}
 	|valor {$$ = $1;}
 	| VAR {
