@@ -76,6 +76,16 @@ cmdos: OUTPUT '(' exp ')' {
 		else
 			puts("Váriavel já declarada!!!");
 	}
+	| TIPO VAR '=' exp {
+		Var *aux = buscaVar(variaveis, $2);
+		if(aux == NULL) {
+			aux = insereVar(variaveis, $2);
+			aux->valor = $4;
+			variaveis = aux;
+		}
+		else
+			puts("Váriavel já declarada!!!");
+	}
 	| VAR '=' exp {
 		Var *aux = buscaVar(variaveis, $1);
 		if(aux == NULL)
@@ -98,6 +108,7 @@ exp: exp '+' exp {$$ = $1 + $3;}
 	|exp '/' exp {$$ = $1 / $3;}
 	|'(' exp ')' {$$ = $2;}
 	|exp '^' exp {$$ = pow($1,$3);}
+	|'#' exp {$$ = sqrt($2);}
 	|'-' exp %prec NEG {$$ = -$2;}
 	|valor {$$ = $1;}
 	| VAR {
@@ -126,6 +137,6 @@ int main(){
 	yyparse();
     yylex();
     fclose(yyin);
-
+// 	|'raiz(' exp ')' {$$ = sqrt($2);}
     return 0;
 }
