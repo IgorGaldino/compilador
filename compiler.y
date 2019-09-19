@@ -127,6 +127,18 @@ Ast * newasgn(char s[], Ast *v) { /*Função para um nó de atribuição*/
 	return (Ast *)a;
 }
 
+Ast * scanasgn(char s[]) { /*Função para um nó de atribuição*/
+	Symasgn *a = (Symasgn*)malloc(sizeof(Symasgn));
+	if(!a) {
+		printf("out of space");
+	exit(0);
+	}
+	a->nodetype = 's';
+  	strcpy(a->s, s);
+	a->v = 0; /*Valor*/
+	return (Ast *)a;
+}
+
 Ast * newValorVal(char s[]) { /*Função que recupera o nome/referência de uma variável, neste caso o número*/
 	Varval *a = (Varval*) malloc(sizeof(Varval));
 	// Var *a = buscaVar(variaveis, s);
@@ -173,7 +185,13 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 			// aux = ((Symasgn *)a)->s;	/*Recupera o símbolo/variável*/
 			// var[aux] = v;				/*Atribui à variável*/
 			break;
-		
+
+		case 's': 
+		{
+			Var *res = buscaVar(variaveis, ((Varval *)a)->var);
+			scanf("%f", &res->valor);
+			break;
+		}
 		case 'I':						/*CASO IF*/
 			//puts("if");
 			if (eval(((Flow *)a)->cond) != 0) {	/*executa a condição / teste*/
@@ -226,15 +244,17 @@ void yyerror (char *s){
 	Ast *a;
 	}
 
-%token <flo>REAL
-%token <str>VAR 
+%token <flo>NUM
 %token <str>TIPO 
-%token <fn> CMP
+%token <str>VAR 
 %token START END OUTPUT INPUT IF ELSE WHILE
+%token <fn> CMP
+
 %left '+' '-'
 %left '*' '/'
 %right '^' '#'
 %right '='
+
 %type <a> exp list stmt prog
 
 %nonassoc IFX NEG
@@ -256,6 +276,7 @@ stmt: IF '(' exp ')' '{' list '}' %prec IFX {$$ = newflow('I', $3, $6, NULL);}
 	| WHILE '(' exp ')' '{' list '}' {$$ = newflow('W', $3, $6, NULL);}
 	| VAR '=' exp {$$ = newasgn($1,$3);}
 	| OUTPUT '(' exp ')' { $$ = newast('P',$3,NULL);}
+	| INPUT  '(' VAR ')' { $$ = scanasgn($3);}
 	;
 
 list:	  stmt{$$ = $1;}
@@ -270,7 +291,7 @@ exp:
 	|exp CMP exp {$$ = newcmp($2,$1,$3);}		/*Testes condicionais*/
 	|'(' exp ')' {$$ = $2;}
 	|'-' exp %prec NEG {$$ = newast('M',$2,NULL);}
-	|REAL {$$ = newnum($1);}						/*token de um número*/
+	|NUM {$$ = newnum($1);}						/*token de um número*/
 	|VAR {$$ = newValorVal($1);}				/*token de uma variável*/
 	;
 

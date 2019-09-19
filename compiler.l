@@ -8,7 +8,7 @@ START "comecou"
 END "acabou"
 INT [0-9]+
 CHAR [a-zA-Z]
-REAL {INT}+\.?{INT}*
+NUM {INT}+\.?{INT}*
 INPUT "imputi"
 OUTPUT "altiputi"
 VAR "$"({CHAR}|{INT})*","?
@@ -20,9 +20,9 @@ INVALID (.)
 
 %%
 
-{REAL} {
+{NUM} {
     yylval.flo = atof(yytext);
-    return REAL;
+    return NUM;
 }
 {OUTPUT} {
     return OUTPUT;
@@ -31,7 +31,7 @@ INVALID (.)
     return INPUT;
     }
 
-[-+()=/*^#] {
+[-+()=/*^#{}] {
     return *yytext;
     }
     
@@ -41,10 +41,6 @@ INVALID (.)
 {END} {
     return END;
     }
-{TIPO} {
-    strcpy(yylval.str, yytext);  
-    return TIPO;
-}
 {VAR} {
     strcpy(yylval.str, yytext); 
 	return VAR;
