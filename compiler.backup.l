@@ -13,8 +13,8 @@ INPUT "imputi"
 OUTPUT "altiputi"
 VAR "$"({CHAR}|{INT})*","?
 IF "ifi"
-ELSE "euzi"
-WHILE "uaile"
+ELSE "eus"
+WHILE
 SPACE [\ ]
 INVALID (.)
 
@@ -46,7 +46,7 @@ INVALID (.)
     return TIPO;
 }
 {VAR} {
-    strcpy(yylval.str, yytext); 
+    strcpy(yylval.str, yytext);  
 	return VAR;
 }
 
