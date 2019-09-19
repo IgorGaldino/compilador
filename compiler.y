@@ -127,7 +127,7 @@ Ast * newasgn(char s[], Ast *v) { /*Função para um nó de atribuição*/
 	return (Ast *)a;
 }
 
-Ast * scanasgn(char s[]) { /*Função para um nó de atribuição*/
+Ast * inputVar(char s[]) { /*Função para um nó de atribuição*/
 	Symasgn *a = (Symasgn*)malloc(sizeof(Symasgn));
 	if(!a) {
 		printf("out of space");
@@ -135,7 +135,7 @@ Ast * scanasgn(char s[]) { /*Função para um nó de atribuição*/
 	}
 	a->nodetype = 's';
   	strcpy(a->s, s);
-	a->v = 0; /*Valor*/
+	a->v = 0;
 	return (Ast *)a;
 }
 
@@ -182,8 +182,6 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 			v = eval(((Symasgn *)a)->v); /*Recupera o valor*/
 			Var *resp = buscaVar(variaveis, ((Varval *)a)->var);
 			resp->valor = v;
-			// aux = ((Symasgn *)a)->s;	/*Recupera o símbolo/variável*/
-			// var[aux] = v;				/*Atribui à variável*/
 			break;
 
 		case 's': 
@@ -193,7 +191,6 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 			break;
 		}
 		case 'I':						/*CASO IF*/
-			//puts("if");
 			if (eval(((Flow *)a)->cond) != 0) {	/*executa a condição / teste*/
 				if (((Flow *)a)->tl)		/*Se existir árvore*/
 					v = eval(((Flow *)a)->tl); /*Verdade*/
@@ -208,11 +205,9 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 			break;
 			
 		case 'W':
-			//printf ("WHILE\n");
 			v = 0.0;
 			if( ((Flow *)a)->tl) {
 				while( eval(((Flow *)a)->cond) != 0){
-					//printf ("VERDADE\n");
 					v = eval(((Flow *)a)->tl);
 					}
 			}
@@ -274,9 +269,10 @@ prog: stmt 		{eval($1);}  /*Inicia e execução da árvore de derivação*/
 stmt: IF '(' exp ')' '{' list '}' %prec IFX {$$ = newflow('I', $3, $6, NULL);}
 	| IF '(' exp ')' '{' list '}' ELSE '{' list '}' {$$ = newflow('I', $3, $6, $10);}
 	| WHILE '(' exp ')' '{' list '}' {$$ = newflow('W', $3, $6, NULL);}
+	| TIPO VAR '=' exp {$$ = newasgn($2,$4);}
 	| VAR '=' exp {$$ = newasgn($1,$3);}
 	| OUTPUT '(' exp ')' { $$ = newast('P',$3,NULL);}
-	| INPUT  '(' VAR ')' { $$ = scanasgn($3);}
+	| INPUT  '(' VAR ')' { $$ = inputVar($3);}
 	;
 
 list:	  stmt{$$ = $1;}
