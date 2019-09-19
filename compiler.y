@@ -19,7 +19,7 @@ typedef struct numval { /*Estrutura de um número*/
 
 typedef struct varval { /*Estrutura de um nome de variável, nesse exemplo uma variável é um número no vetor var[26]*/
 	int nodetype;
-	char var[50];
+	char var[51];
 }Varval;
 
 typedef struct flow { /*Estrutura de um desvio (if/else/while)*/
@@ -31,24 +31,24 @@ typedef struct flow { /*Estrutura de um desvio (if/else/while)*/
 
 typedef struct symasgn { /*Estrutura para um nó de atribuição. Para atrubior o valor de v em s*/
 	int nodetype;
-	char s[50];
+	char s[51];
 	Ast *v;
 }Symasgn;
 
 typedef struct var {
 	// char id[1001];
-	double valor;
-	char nome[50];
+	int nodetype;
+	char nome[51];
+	float valor;
 	// float valor;
 	struct var *next;
 } Var;
 
 Var *variaveis = NULL;
 //double var[26]; /*Variáveis*/
-int aux;
+// int aux;
 
 Var *buscaVar(Var *vars, char nome[]) {
-	printf("####search %s\n", nome);
 	Var *list;
 	for(list = vars; list != NULL; list=list->next)
 		if(!strcmp(list->nome, nome))
@@ -91,7 +91,7 @@ Ast * newflow(int nodetype, Ast *cond, Ast *tl, Ast *el){ /*Função que cria um
 	Flow *a = (Flow*)malloc(sizeof(Flow));
 	if(!a) {
 		printf("out of space");
-	exit(0);
+		exit(0);
 	}
 	a->nodetype = nodetype;
 	a->cond = cond;
@@ -106,7 +106,7 @@ Ast * newcmp(int cmptype, Ast *l, Ast *r){ /*Função que cria um nó para teste
 		printf("out of space");
 		exit(0);
 	}
-	a->nodetype = '0' + cmptype; /*Para pegar o tipe de teste, definido no arquivo.l e utilizar na função eval()*/
+	a->nodetype = '0' + cmptype; /*Para pegar o tipo de teste, definido no arquivo.l e utilizar na função eval()*/
 	a->l = l;
 	a->r = r;
 	return a;
@@ -127,9 +127,9 @@ Ast * newasgn(char s[], Ast *v) { /*Função para um nó de atribuição*/
 	return (Ast *)a;
 }
 
-
 Ast * newValorVal(char s[]) { /*Função que recupera o nome/referência de uma variável, neste caso o número*/
 	Varval *a = (Varval*) malloc(sizeof(Varval));
+	// Var *a = buscaVar(variaveis, s);
 	if(!a) {
 		printf("out of space");
 		exit(0);
@@ -137,7 +137,6 @@ Ast * newValorVal(char s[]) { /*Função que recupera o nome/referência de uma 
 	a->nodetype = 'N';
   	strcpy(a->var, s);
 	return (Ast*)a;
-	
 }
 
 double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
@@ -176,7 +175,7 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 			break;
 		
 		case 'I':						/*CASO IF*/
-			puts("if");
+			//puts("if");
 			if (eval(((Flow *)a)->cond) != 0) {	/*executa a condição / teste*/
 				if (((Flow *)a)->tl)		/*Se existir árvore*/
 					v = eval(((Flow *)a)->tl); /*Verdade*/
@@ -220,7 +219,7 @@ void yyerror (char *s){
 %}
 
 %union{
-	char str[50];
+	char str[51];
 	float flo;
 	int fn;
 	int inte;
@@ -230,9 +229,8 @@ void yyerror (char *s){
 %token <flo>REAL
 %token <str>VAR 
 %token <str>TIPO 
-%token IF ELSE WHILE
 %token <fn> CMP
-%token START END OUTPUT INPUT
+%token START END OUTPUT INPUT IF ELSE WHILE
 %left '+' '-'
 %left '*' '/'
 %right '^' '#'
@@ -274,7 +272,6 @@ exp:
 	|'-' exp %prec NEG {$$ = newast('M',$2,NULL);}
 	|REAL {$$ = newnum($1);}						/*token de um número*/
 	|VAR {$$ = newValorVal($1);}				/*token de uma variável*/
-
 	;
 
 %%

@@ -1,25 +1,13 @@
 comecou
-	$aa = 2
+	$aa = 12
 	$bb = 4
-	$cc = 8
-	$dd = 10
+	$cc = 5
+	altiputi($cc)
+
 	ifi($aa > $bb){
-		ifi($aa > $cc){
-			print($aa)
-		}euzi{
-			print($cc)
-		}
+		altiputi($aa)
 	}euzi{
-		ifi ($bb > $cc){
-			print ($bb)
-		}euzi{
-			print ($cc)
-		}
+		altiputi($bb)
 	}
 	
-	uaile($aa < $dd){
-		$aa = $aa + 1
-		print ($aa)
-	}
-		
 acabou
