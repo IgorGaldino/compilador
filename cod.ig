@@ -1,21 +1,13 @@
 comecou
+	quebrado $x1 = 0
+	quebrado $x2 = 0
+	quebrado $y1 = 0
+	quebrado $y2 = 0
+	imputi($x1)
+	imputi($y1)
+	imputi($x2)
+	imputi($y2)
+	quebrado $valor = (($x2-$x1)^2)+(($y2-$y1)^2)
+	altiputi($valor#2) 
 
-	quebrado $a = 2
-	quebrado $b = 4
-	quebrado $c = 8
-	quebrado $d = 0
-	
-	imputi($d)
-	altiputi($d)
-
-	ifi($a > $b){
-		altiputi($a)
-	}euzi{
-		ifi($b < $c) {
-			altiputi ($b)	
-		} euzi {
-			altiputi ($c)
-		}
-	}
-	
 acabou

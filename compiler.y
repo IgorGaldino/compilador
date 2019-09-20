@@ -163,12 +163,14 @@ double eval(Ast *a) { /*Função que executa operações a partir de um nó*/
 		{
 			Var *res = buscaVar(variaveis, ((Varval *)a)->var);
 			v = res->valor;
-			break; //var[(Numval *)a)->number];	/*Recupera o valor de uma variável*/
+			break;
 		}
 		case '+': v = eval(a->l) + eval(a->r); break;	/*Operações "árv esq   +   árv dir"*/
 		case '-': v = eval(a->l) - eval(a->r); break;	/*Operações*/
 		case '*': v = eval(a->l) * eval(a->r); break;	/*Operações*/
 		case '/': v = eval(a->l) / eval(a->r); break; /*Operações*/
+		case '^': v = pow(eval(a->l), eval(a->r)); break; /*Operações*/
+		case '#': v = pow(eval(a->l), 1/eval(a->r)); break; /*Operações*/
 		case 'M': v = -eval(a->l); break;				/*Operações, número negativo*/
 	
 		case '1': v = (eval(a->l) > eval(a->r))? 1 : 0; break;	/*Operações lógicas. "árv esq   >   árv dir"  Se verdade 1, falso 0*/
@@ -248,7 +250,7 @@ void yyerror (char *s){
 %left '+' '-'
 %left '*' '/'
 %right '^' '#'
-%right '='
+%right '=' 
 
 %type <a> exp list stmt prog
 
@@ -284,6 +286,8 @@ exp:
 	|exp '-' exp {$$ = newast('-',$1,$3);}
 	|exp '*' exp {$$ = newast('*',$1,$3);}
 	|exp '/' exp {$$ = newast('/',$1,$3);}
+	|exp '^' exp {$$ = newast('^',$1,$3);}
+	|exp '#' exp {$$ = newast('#',$1,$3);}
 	|exp CMP exp {$$ = newcmp($2,$1,$3);}		/*Testes condicionais*/
 	|'(' exp ')' {$$ = $2;}
 	|'-' exp %prec NEG {$$ = newast('M',$2,NULL);}
